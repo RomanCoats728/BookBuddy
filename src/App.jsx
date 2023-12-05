@@ -1,20 +1,89 @@
-import { useState } from 'react'
-import bookLogo from './assets/books.png'
-
+import { useState, useEffect } from "react";
+import bookLogo from "./assets/books.png";
+import { API_URL } from "./API";
+import Register from "./components/Register";
+import Account from "./components/Account";
+import Login from "./components/Login";
+import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
+import Books from "./components/Books";
+import SingleBook from "./components/SingleBook";
+import Navigations from "./components/Navigations";
+import HomePage from "./components/Home";
 function App() {
-  const [token, setToken] = useState(null)
+  const [token, setToken] = useState(null);
+  const [books, setBooks] = useState([]);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const localToken = localStorage.getItem("token");
+    if (localToken !== undefined) setToken(localToken);
+  }, []);
+
+  useEffect(() => {
+    if (token !== null && token !== undefined) {
+      console.log(token);
+      async function fetchUser(token) {
+        try {
+          const nextUser = await getUser(token);
+
+          setUser(nextUser);
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      fetchUser(token);
+    }
+  }, [token]);
+
+  async function fetchBooks() {
+    try {
+      const response = await fetch(`${API_URL}/books`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const result = await response.json();
+      console.log(result);
+      setBooks(result.books);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchBooks();
+  }, []);
 
   return (
-    <>
-      <h1><img id='logo-image' src={bookLogo}/>Library App</h1>
-
-      <p>Complete the React components needed to allow users to browse a library catalog, check out books, review their account, and return books that they've finished reading.</p>
-
-      <p>You may need to use the `token` in this top-level component in other components that need to know if a user has logged in or not.</p>
-
-      <p>Don't forget to set up React Router to navigate between the different views of your single page application!</p>
-    </>
-  )
+    <BrowserRouter>
+      <h1>
+        <img id="logo-image" src={bookLogo} />
+        Book Buddy
+        <img id="logo-image" src={bookLogo} />
+      </h1>
+      <Navigations token={token} setToken={setToken} setUser={setUser} />
+      <Routes>
+        <Route
+          path="/"
+          element={<HomePage books={books} fetchBooks={fetchBooks} />}
+        />
+        <Route
+          path="/books/:id"
+          element={<SingleBook user={user} token={token} />}
+        />
+        <Route path="/login" element={<Login setToken={setToken} />} />
+        <Route
+          path="/register"
+          element={<Register token={token} setToken={setToken} />}
+        />
+        <Route
+          path="/account"
+          element={<Account user={user} setToken={setToken} token={token} />}
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
