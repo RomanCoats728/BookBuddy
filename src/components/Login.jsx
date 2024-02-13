@@ -1,7 +1,6 @@
-/* TODO - add your code to create a functional React component that renders a login form */
-import { useState } from "react";
+import React, { useState } from "react";
 import { loginUser } from "../API";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Login({ setToken }) {
   const [email, setEmail] = useState("");
@@ -15,32 +14,33 @@ export default function Login({ setToken }) {
       email,
       password,
     };
-    const access = await loginUser(userObj);
-    console.log(access);
-    setToken(access);
-    navigate("/account");
+    try {
+      const access = await loginUser(userObj);
+      setToken(access);
+      navigate("/account");
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <label>
-        {" "}
-        E-Mail:{" "}
+        E-Mail:
         <input
           value={email}
           onChange={(event) => setEmail(event.target.value)}
         />
       </label>
       <label>
-        {" "}
-        Password:{" "}
+        Password:
         <input
           type="password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />
       </label>
-      <button>Login</button>
+      <button type="submit">Login</button>
     </form>
   );
 }

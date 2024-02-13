@@ -21,6 +21,7 @@ export const registerUser = async (userObj) => {
     console.error(err);
   }
 };
+
 export const loginUser = async (userObj) => {
   try {
     const rsp = await fetch(`${API_URL}/users/login`, {
@@ -37,15 +38,16 @@ export const loginUser = async (userObj) => {
     console.log("loginUser", json);
     return json.token;
   } catch (err) {
-    console.err(err);
+    console.error(err);
   }
 };
+
 export const getUser = async (token) => {
   try {
     const rsp = await fetch(`${API_URL}/users/me`, {
       headers: {
         "Content-Type": "application/json",
-        Authorication: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     const json = await rsp.json();
@@ -57,7 +59,7 @@ export const getUser = async (token) => {
 
 export const getBooks = async () => {
   try {
-    const rsp = await fetch(`${API_URL}/api/books`, {
+    const rsp = await fetch(`${API_URL}/books`, {
       headers: {
         "Content-Type": "application/json",
       },

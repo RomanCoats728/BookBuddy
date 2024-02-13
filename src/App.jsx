@@ -5,10 +5,11 @@ import Register from "./components/Register";
 import Account from "./components/Account";
 import Login from "./components/Login";
 import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
-import Books from "./components/Books";
+import { getUser } from "./API";
 import SingleBook from "./components/SingleBook";
 import Navigations from "./components/Navigations";
 import HomePage from "./components/Home";
+
 function App() {
   const [token, setToken] = useState(null);
   const [books, setBooks] = useState([]);

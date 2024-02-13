@@ -1,5 +1,6 @@
-/* TODO - add your code to create a functional React component that renders a registration form */import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+/* TODO - add your code to create a functional React component that renders a registration form */
+import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import { registerUser } from "../API";
 
 export default function Register({ setToken }) {
@@ -18,9 +19,13 @@ export default function Register({ setToken }) {
       email,
       password,
     };
-    const access = await registerUser(userObj);
-    setToken(access);
-    navigate("/account");
+    try {
+      const access = await registerUser(userObj);
+      setToken(access);
+      navigate("/account");
+    } catch (error) {
+      console.error("Registration failed:", error);
+    }
   };
 
   return (
@@ -54,7 +59,7 @@ export default function Register({ setToken }) {
           onChange={(event) => setPassword(event.target.value)}
         />
       </label>
-      <button>SignUp!</button>
+      <button type="submit">SignUp!</button>
     </form>
   );
 }
